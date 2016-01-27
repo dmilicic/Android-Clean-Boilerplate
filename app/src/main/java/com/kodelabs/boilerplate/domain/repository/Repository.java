@@ -3,7 +3,7 @@ package com.kodelabs.boilerplate.domain.repository;
 import com.kodelabs.boilerplate.domain.model.SampleModel;
 
 /**
- * Created by dmilicic on 12/13/15.
+ * A sample repository with CRUD operations on a model.
  */
 public interface Repository {
 

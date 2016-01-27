@@ -1,9 +1,9 @@
 package com.kodelabs.boilerplate.presentation.ui;
 
 /**
- * Created by dmilicic on 1/26/16.
- * <p/>
+ * <p>
  * This interface represents a basic view. All views should implement these common methods.
+ * </p>
  */
 public interface BaseView {
 
@@ -21,7 +21,7 @@ public interface BaseView {
     /**
      * This method is used for showing error messages on the UI.
      *
-     * @param message The error message to be dislayed.
+     * @param message The error message to be displayed.
      */
     void showError(String message);
 }

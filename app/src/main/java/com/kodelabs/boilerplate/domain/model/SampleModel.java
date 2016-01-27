@@ -1,7 +1,7 @@
 package com.kodelabs.boilerplate.domain.model;
 
 /**
- * Created by dmilicic on 1/26/16.
+ * A sample model. Replace this with your own.
  */
 public class SampleModel {
 

@@ -7,10 +7,8 @@ import com.kodelabs.boilerplate.domain.interactors.base.AbstractInteractor;
 import com.kodelabs.boilerplate.domain.repository.Repository;
 
 /**
- * This interactor is responsible for creating and adding a new cost item into the database. It should get all the data needed to create
- * a new cost object and it should insert it in our repository.
+ * This is an interactor boilerplate with a reference to a model repository.
  * <p/>
- * Created by dmilicic on 12/23/15.
  */
 public class SampleInteractorImpl extends AbstractInteractor implements SampleInteractor {
 

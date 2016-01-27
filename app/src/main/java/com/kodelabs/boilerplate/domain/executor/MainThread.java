@@ -5,7 +5,6 @@ package com.kodelabs.boilerplate.domain.executor;
  * if an interactor needs to show an object to the UI this can be used to make sure the show method is called on the UI
  * thread.
  * <p/>
- * Created by dmilicic on 7/29/15.
  */
 public interface MainThread {
 

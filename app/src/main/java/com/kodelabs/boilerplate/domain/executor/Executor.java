@@ -5,7 +5,6 @@ import com.kodelabs.boilerplate.domain.interactors.base.AbstractInteractor;
 /**
  * This executor is responsible for running interactors on background threads.
  * <p/>
- * Created by dmilicic on 7/29/15.
  */
 public interface Executor {
 

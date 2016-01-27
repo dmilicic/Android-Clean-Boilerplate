@@ -1,8 +1,5 @@
 package com.kodelabs.boilerplate.presentation.presenters.base;
 
-/**
- * Created by dmilicic on 7/28/15.
- */
 public interface BasePresenter {
     /**
      * Method that control the lifecycle of the view. It should be called in the view's

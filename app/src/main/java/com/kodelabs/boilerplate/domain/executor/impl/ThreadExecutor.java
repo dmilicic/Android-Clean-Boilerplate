@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * This singleton class will make sure that each interactor operation gets a background thread.
  * <p/>
- * Created by dmilicic on 7/29/15.
  */
 public class ThreadExecutor implements Executor {
 

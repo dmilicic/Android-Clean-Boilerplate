@@ -1,7 +1,8 @@
 package com.kodelabs.boilerplate.domain.interactors.base;
 
+
 /**
- * Created by dmilicic on 12/13/15.
+ * This is the main interface of an interactor. Each interactor serves a specific use case.
  */
 public interface Interactor {
 
