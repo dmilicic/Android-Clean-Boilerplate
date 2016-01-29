@@ -25,10 +25,14 @@ public class WelcomingInteractorImpl extends AbstractInteractor implements Welco
 
     @Override
     public void run() {
+
+        // retrieve the message
         final String message = mMessageRepository.getWelcomeMessage();
 
         // check if we have failed to retrieve our message
         if (message == null || message.length() == 0) {
+
+            // notify the failure on the main thread
             mMainThread.post(new Runnable() {
                 @Override
                 public void run() {
