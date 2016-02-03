@@ -10,6 +10,7 @@ import com.kodelabs.boilerplate.domain.executor.impl.ThreadExecutor;
 import com.kodelabs.boilerplate.presentation.presenters.MainPresenter;
 import com.kodelabs.boilerplate.presentation.presenters.MainPresenter.View;
 import com.kodelabs.boilerplate.presentation.presenters.impl.MainPresenterImpl;
+import com.kodelabs.boilerplate.storage.WelcomeMessageRepository;
 import com.kodelabs.boilerplate.threading.MainThreadImpl;
 
 import butterknife.Bind;
@@ -29,7 +30,12 @@ public class MainActivity extends AppCompatActivity implements View {
         ButterKnife.bind(this);
 
         // create a presenter for this view
-        mPresenter = new MainPresenterImpl(ThreadExecutor.getInstance(), MainThreadImpl.getInstance(), this);
+        mPresenter = new MainPresenterImpl(
+                ThreadExecutor.getInstance(),
+                MainThreadImpl.getInstance(),
+                this,
+                new WelcomeMessageRepository()
+        );
     }
 
     @Override

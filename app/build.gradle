@@ -5,6 +5,10 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+    lintOptions {
+        abortOnError false
+    }
+
     defaultConfig {
         applicationId "com.kodelabs.boilerplate"
         minSdkVersion 15

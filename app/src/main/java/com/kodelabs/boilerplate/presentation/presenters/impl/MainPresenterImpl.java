@@ -4,9 +4,9 @@ import com.kodelabs.boilerplate.domain.executor.Executor;
 import com.kodelabs.boilerplate.domain.executor.MainThread;
 import com.kodelabs.boilerplate.domain.interactors.WelcomingInteractor;
 import com.kodelabs.boilerplate.domain.interactors.impl.WelcomingInteractorImpl;
+import com.kodelabs.boilerplate.domain.repository.MessageRepository;
 import com.kodelabs.boilerplate.presentation.presenters.MainPresenter;
 import com.kodelabs.boilerplate.presentation.presenters.base.AbstractPresenter;
-import com.kodelabs.boilerplate.storage.WelcomeMessageRepository;
 
 /**
  * Created by dmilicic on 12/13/15.
@@ -15,12 +15,13 @@ public class MainPresenterImpl extends AbstractPresenter implements MainPresente
         WelcomingInteractor.Callback {
 
     private MainPresenter.View mView;
+    private MessageRepository  mMessageRepository;
 
-    public MainPresenterImpl(Executor executor,
-                             MainThread mainThread,
-                             View view) {
+    public MainPresenterImpl(Executor executor, MainThread mainThread,
+                             View view, MessageRepository messageRepository) {
         super(executor, mainThread);
         mView = view;
+        mMessageRepository = messageRepository;
     }
 
     @Override
@@ -29,8 +30,12 @@ public class MainPresenterImpl extends AbstractPresenter implements MainPresente
         mView.showProgress();
 
         // initialize the interactor
-        WelcomingInteractor interactor = new WelcomingInteractorImpl(mExecutor,
-                mMainThread, this, new WelcomeMessageRepository());
+        WelcomingInteractor interactor = new WelcomingInteractorImpl(
+                mExecutor,
+                mMainThread,
+                this,
+                mMessageRepository
+        );
 
         // run the interactor
         interactor.execute();
