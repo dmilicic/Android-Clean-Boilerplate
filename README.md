@@ -26,18 +26,15 @@ You will want to make a few minor changes when using this template:
 
 # Getting started writing a new use case
 
-This section will explain all the code you need to write to create a use case using the Clean approach.
-
 A use case is just some isolated functionality of the app. A use case may  (e.g. on user click) or may not be started by a user. For example, a use case might be: *"Get all data from the database and display it on the UI when the app starts."*
 
-In this example, our use case will be: ***"Greet the user with a message that is stored in the database when the app starts."*** This example can be tried out in the `example` branch. This example will showcase how to write the three layers needed to make the use case work:
+In this example, our use case will be: ***"Greet the user with a message that is stored in the database when the app starts."*** This example can be tried out in the `example` branch. This example will showcase how to write the following three packages needed to make the use case work:
 
 - the **presentation** layer
 - the **storage** layer
 - the **domain** layer
 
-The first two belong to the outer layers while the last one is the inner/core layer.
-
+The first two belong to the outer layers while the last one is the inner/core layer. **Presentation** package is responsible for everything related to showing things on the screen — it includes the whole MVP stack (it means it also includes both the UI and Presenter packages even though they belong to different layers).
 
 
 ## **Writing a new interactor (inner/core layer)**
@@ -59,7 +56,7 @@ public interface WelcomingInteractor extends Interactor {
 
 ```
 
-The `Callback` is responsible for talking to the UI on the main thread, we put it into this interactor's interface so we know where it belongs to. Now let's implement our logic of retrieving a message. Let's say we have some `MessageRepository` that can give us our welcome message.
+The `Callback` is responsible for talking to the UI on the main thread, we put it into this Interactor’s interface so we don’t have to name it a ***WelcomingInteractorCallback*** — to distinguish it from other callbacks. Now let’s implement our logic of retrieving a message. Let's say we have some `MessageRepository` that can give us our welcome message.
 
 ```
 public interface MessageRepository {
@@ -67,41 +64,54 @@ public interface MessageRepository {
 }
 ```
 
-Now we should implement our interactor interface with our business logic. **It is important that the implementation extends the `AbstractInteractor` which takes care of running it on the background thread.**
+Now we should implement our Interactor interface with our business logic. **It is important that the implementation extends the `AbstractInteractor` which takes care of running it on the background thread.**
 
 ```
-@Override
-public void run() {
+public class WelcomingInteractorImpl extends AbstractInteractor implements WelcomingInteractor {
 
-    // retrieve the message
-    final String message = mMessageRepository.getWelcomeMessage();
+...
 
-    // check if we have failed to retrieve our message
-    if (message == null || message.length() == 0) {
+  private void notifyError() {
+      mMainThread.post(new Runnable() {
+          @Override
+          public void run() {
+              mCallback.onRetrievalFailed("Nothing to welcome you with :(");
+          }
+      });
+  }
 
-        // notify the failure on the main thread
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                mCallback.onRetrievalFailed("Nothing to welcome you with :(");
-            }
-        });
+  private void postMessage(final String msg) {
+      mMainThread.post(new Runnable() {
+          @Override
+          public void run() {
+              mCallback.onMessageRetrieved(msg);
+          }
+      });
+  }
 
-        return;
-    }
+  @Override
+  public void run() {
 
-    // we have retrieved our message, notify the UI on the main thread
-    mMainThread.post(new Runnable() {
-        @Override
-        public void run() {
-            mCallback.onMessageRetrieved(message);
-        }
-    });
+      // retrieve the message
+      final String message = mMessageRepository.getWelcomeMessage();
+
+      // check if we have failed to retrieve our message
+      if (message == null || message.length() == 0) {
+
+          // notify the failure on the main thread
+          notifyError();
+
+          return;
+      }
+
+      // we have retrieved our message, notify the UI on the main thread
+      postMessage(message);
+  }
 }
 ```
 This just attempts to retrieve the message and sends the message or the error to the UI to display it. We notify the UI using our `Callback` which is actually going to be our `Presenter`. **That is the crux of our business logic. Everything else we need to do is framework dependent.**
 
-Let's take a look which dependencies does this interactor have:
+Let's take a look which dependencies does this Interactor have:
 
 ```
 import com.kodelabs.boilerplate.domain.executor.Executor;
@@ -111,11 +121,11 @@ import com.kodelabs.boilerplate.domain.interactors.base.AbstractInteractor;
 import com.kodelabs.boilerplate.domain.repository.MessageRepository;
 ```
 
-As you can see, there is **no mention of any Android code.** That is the **main benefit** of this approach.
+As you can see, there is **no mention of any Android code**. That is the **main benefit** of this approach. Also, we do not care about specifics of the UI or database, we just call interface methods that someone somewhere in the outer layer will implement.
 
 ## **Testing our interactor**
 
-We can now run and test our interactor without running an emulator. So let's write a simple **JUnit** test to make sure it works:
+We can now run and test our Interactor without running an emulator. So let's write a simple **JUnit** test to make sure it works:
 
 ```
 @Test
@@ -126,7 +136,12 @@ public void testWelcomeMessageFound() throws Exception {
     when(mMessageRepository.getWelcomeMessage())
             .thenReturn(msg);
 
-    WelcomingInteractorImpl interactor = new WelcomingInteractorImpl(mExecutor, mMainThread, mMockedCallback, mMessageRepository);
+    WelcomingInteractorImpl interactor = new WelcomingInteractorImpl(
+      mExecutor,
+      mMainThread,
+      mMockedCallback,
+      mMessageRepository
+    );
     interactor.run();
 
     Mockito.verify(mMessageRepository).getWelcomeMessage();
@@ -134,6 +149,8 @@ public void testWelcomeMessageFound() throws Exception {
     Mockito.verify(mMockedCallback).onMessageRetrieved(msg);
 }
 ```
+
+Again, this Interactor code has no idea that it will live inside an Android app.
 
 ## **Writing the presentation layer**
 
@@ -150,7 +167,7 @@ public interface MainPresenter extends BasePresenter {
 }
 ```
 
-So how and where do we start the interactor when an app resumes? Everything that is not stricly view related should go into the `Presenter` as to make the `Activity` class as thin as possible because they tend to bloat. This includes working with interactors.
+So how and where do we start the Interactor when an app resumes? Everything that is not strictly view related should go into the `Presenter` class. This helps achieve `separation of concerns` and prevents the `Activity` classes from getting bloated. This includes all code working with Interactors.
 
 In our `MainActivity` class we override the `onResume` method:
 
@@ -173,25 +190,29 @@ public void resume() {
     mView.showProgress();
 
     // initialize the interactor
-    WelcomingInteractor interactor = new WelcomingInteractorImpl(mExecutor,
-            mMainThread, this, new WelcomeMessageRepository());
+    WelcomingInteractor interactor = new WelcomingInteractorImpl(
+            mExecutor,
+            mMainThread,
+            this,
+            mMessageRepository
+    );
 
     // run the interactor
     interactor.execute();
 }
 ```
 
-The `execute()` method will just execute the `run()` method of the `WelcomingInteractorImpl` in a background thread. The `run()` method can be seen in the ***Writing a new interactor*** section.
+The `execute()` method will just execute the `run()` method of the `WelcomingInteractorImpl` in a background thread. The `run()` method can be seen later in the ***Writing a new interactor*** section.
 
-You may notice that the interactor behaves similarly to the `AsyncTask` class. You supply it with all that it needs to run and execute it. You might ask why didn't we just use `AsyncTask`? Because that is **Android specific code**, you would need an emulator to run it and to test it.
+You may notice that the Interactor behaves similarly to the `AsyncTask` class. You supply it with all that it needs to run and execute it. You might ask why didn't we just use `AsyncTask`? Because that is **Android specific code** and you would need an emulator to run it and to test it.
 
 
-We provide several things to the interactor:
+We provide several things to the Interactor:
 
 - The `ThreadExecutor` instance which is responsible for executing interactors in a background thread. I usually make it a singleton. This class actually resides in the `domain` and does not need to be implemented in an outer layer.
 - The `MainThreadImpl` instance which is responsible for posting runnables on the main thread from the interactor. Main threads are accessible using framework dependent code and we implement it in an outer `threading` layer.
-- You may also notice we provide `this` to the interactor as the `Callback` the interactor will use to notify the UI.
-- We provide an instance of the `WelcomeMessageRepository` which implements the `MessageRepository` interface that our interactor uses. The `WelcomeMessageRepository` is covered in the ***Writing the storage layer*** section.
+- You may also notice we provide `this` to the Interactor — `MainPresenter` is the `Callback` object the Interactor will use to notify the UI for events.
+- We provide an instance of the `WelcomeMessageRepository` which implements the `MessageRepository` interface that our interactor uses. The `WelcomeMessageRepository` is covered later in the ***Writing the storage layer*** section.
 
 Regarding `this`, the `MainPresenter` of the `MainActivity` really does implement the `Callback` interface:
 
@@ -200,7 +221,7 @@ public class MainPresenterImpl extends AbstractPresenter implements MainPresente
         WelcomingInteractor.Callback {
 ```
 
-**And that is how we listen for events from the interactor.** This is the code from the `MainPresenter`:
+And that is how we listen for events from the Interactor. This is the code from the `MainPresenter`:
 
 ```
 @Override
@@ -235,7 +256,11 @@ And that is pretty much it for the presentation layer.
 
 ## **Writing the storage layer**
 
-This is where our repository gets implemented. All the database specific code should come here. Our database is not really a database. It is going to be a very simple class with some simulated delay:
+This is where our repository gets implemented. All the database specific code should come here. The repository pattern just abstracts where the data is coming from. Our main business logic is oblivious to the source of the data — be it from a database, a server or text files.
+
+For complex data you can use [ContentProviders] or ORM tools such as [DBFlow]. If you need to retrieve data from the web then [Retrofit] will help you. If you need simple key-value storage then you can use [SharedPreferences]. You should use the right tool for the job.
+
+Our database is not really a database. It is going to be a very simple class with some simulated delay:
 
 ```
 public class WelcomeMessageRepository implements MessageRepository {
@@ -271,5 +296,8 @@ As far as our `WelcomingInteractor` is concerned, the lag might be because of th
 [Mockito]: <http://site.mockito.org/>
 [Retrofit]: <https://square.github.io/retrofit/>
 [Findbugs]: <http://findbugs.sourceforge.net/>
+[DBFlow]: <https://github.com/Raizlabs/DBFlow>
+[SharedPreferences]: <http://developer.android.com/training/basics/data-storage/shared-preferences.html>
+[ContentProviders]: <http://developer.android.com/guide/topics/providers/content-providers.html>
 
 [Android-CleanArchitecture]: <https://github.com/android10/Android-CleanArchitecture>
