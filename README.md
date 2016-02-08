@@ -43,7 +43,7 @@ In reality you could start in any layer of the architecture, but I recommend you
 
 So let's start by creating an interactor. The interactor is where the main logic of the use case resides. **All interactors are run in the background thread so there shouldn't be any impact on UI performance.** Let's create a new interactor with a warm name of `WelcomingInteractor`.
 
-```
+```java
 public interface WelcomingInteractor extends Interactor {
 
     interface Callback {
@@ -58,7 +58,7 @@ public interface WelcomingInteractor extends Interactor {
 
 The `Callback` is responsible for talking to the UI on the main thread, we put it into this Interactor’s interface so we don’t have to name it a ***WelcomingInteractorCallback*** — to distinguish it from other callbacks. Now let’s implement our logic of retrieving a message. Let's say we have some `MessageRepository` that can give us our welcome message.
 
-```
+```java
 public interface MessageRepository {
     String getWelcomeMessage();
 }
@@ -66,7 +66,7 @@ public interface MessageRepository {
 
 Now we should implement our Interactor interface with our business logic. **It is important that the implementation extends the `AbstractInteractor` which takes care of running it on the background thread.**
 
-```
+```java
 public class WelcomingInteractorImpl extends AbstractInteractor implements WelcomingInteractor {
 
 ...
@@ -113,7 +113,7 @@ This just attempts to retrieve the message and sends the message or the error to
 
 Let's take a look which dependencies does this Interactor have:
 
-```
+```java
 import com.kodelabs.boilerplate.domain.executor.Executor;
 import com.kodelabs.boilerplate.domain.executor.MainThread;
 import com.kodelabs.boilerplate.domain.interactors.WelcomingInteractor;
@@ -127,7 +127,7 @@ As you can see, there is **no mention of any Android code**. That is the **main 
 
 We can now run and test our Interactor without running an emulator. So let's write a simple **JUnit** test to make sure it works:
 
-```
+```java
 @Test
 public void testWelcomeMessageFound() throws Exception {
 
@@ -158,7 +158,7 @@ Presentation layer is the **outer layer** in Clean. It consists of framework dep
 
 Let's start by writing the interface of our `Presenter` and `View`. The only thing our `view` needs to do is to display the welcome message:
 
-```
+```java
 public interface MainPresenter extends BasePresenter {
 
     interface View extends BaseView {
@@ -171,7 +171,7 @@ So how and where do we start the Interactor when an app resumes? Everything that
 
 In our `MainActivity` class we override the `onResume` method:
 
-```
+```java
 @Override
 protected void onResume() {
     super.onResume();
@@ -183,7 +183,7 @@ protected void onResume() {
 
 All `Presenter` objects implement the `resume()` method when they extend `BasePresenter`. We start the interactor inside the `MainPresenter` class in the `resume()` method:
 
-```
+```java
 @Override
 public void resume() {
 
@@ -216,14 +216,14 @@ We provide several things to the Interactor:
 
 Regarding `this`, the `MainPresenter` of the `MainActivity` really does implement the `Callback` interface:
 
-```
+```java
 public class MainPresenterImpl extends AbstractPresenter implements MainPresenter,
         WelcomingInteractor.Callback {
 ```
 
 And that is how we listen for events from the Interactor. This is the code from the `MainPresenter`:
 
-```
+```java
 @Override
 public void onMessageRetrieved(String message) {
     mView.hideProgress();
@@ -239,13 +239,13 @@ public void onRetrievalFailed(String error) {
 
 The `View` seen in these snippets is our `MainActivity` which implements this interface:
 
-```
+```java
 public class MainActivity extends AppCompatActivity implements MainPresenter.View {
 ```
 
 Which is then responsible for displaying these messages, as seen here:
 
-```
+```java
 @Override
 public void displayWelcomeMessage(String msg) {
     mWelcomeTextView.setText(msg);
@@ -262,7 +262,7 @@ For complex data you can use [ContentProviders] or ORM tools such as [DBFlow]. I
 
 Our database is not really a database. It is going to be a very simple class with some simulated delay:
 
-```
+```java
 public class WelcomeMessageRepository implements MessageRepository {
     @Override
     public String getWelcomeMessage() {
