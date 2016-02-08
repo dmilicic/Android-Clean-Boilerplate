@@ -287,7 +287,7 @@ As far as our `WelcomingInteractor` is concerned, the lag might be because of th
 `MIT`
 
 
-[here]: <https://github.com/dmilicic/android-sample-app>
+[here]: <https://github.com/dmilicic/android-clean-sample-app>
 [How to]: <https://stackoverflow.com/questions/16804093/android-studio-rename-package>
 [Butterknife]: <https://github.com/JakeWharton/butterknife>
 [Timber]: <https://github.com/JakeWharton/timber>
