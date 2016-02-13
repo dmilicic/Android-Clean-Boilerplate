@@ -23,6 +23,7 @@ You will want to make a few minor changes when using this template:
 
 - Rename the base package `com.kodelabs.boilerplate` to your preferred name. *[How to]*
 - Modify the `applicationId` in your `app/build.gradle` to the base package name you set in the above step.
+- Modify `package` in manifest tag in AndroidManifest.xml
 
 # Getting started writing a new use case
 
