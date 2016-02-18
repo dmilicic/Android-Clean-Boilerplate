@@ -1,6 +1,6 @@
 # Overview
 
-This is starter template for writing Android apps using **Clean architecture**. You can download it, modify it and start building your apps on top of it. Most of the boilerplate code for writing your first view, presenter and interactor is already written and you just need to implement your own logic.
+This is starter template for writing Android apps using **Clean architecture**. You can download it, modify it and start building your apps on top of it. Most of the boilerplate code for writing your first view, presenter and interactor is already written and you just need to implement your own logic. I wrote a [detailed guide] on how to write apps using this pattern but this README contains the summary.
 
 This starter app supports **API 15 and above**.
 
@@ -24,6 +24,8 @@ You will want to make a few minor changes when using this template:
 - Rename the base package `com.kodelabs.boilerplate` to your preferred name. *[How to]*
 - Modify the `applicationId` in your `app/build.gradle` to the base package name you set in the above step.
 - Modify `package` in manifest tag in AndroidManifest.xml
+
+***If you have built and/or published apps using this boilerplate, let me know and I will list it here.***
 
 # Getting started writing a new use case
 
@@ -287,7 +289,7 @@ As far as our `WelcomingInteractor` is concerned, the lag might be because of th
 
 `MIT`
 
-
+[detailed guide]: <https://medium.com/p/a-detailed-guide-on-developing-android-apps-using-the-clean-architecture-pattern-d38d71e94029>
 [here]: <https://github.com/dmilicic/android-clean-sample-app>
 [How to]: <https://stackoverflow.com/questions/16804093/android-studio-rename-package>
 [Butterknife]: <https://github.com/JakeWharton/butterknife>
