@@ -30,7 +30,7 @@ dependencies {
     compile 'com.jakewharton.timber:timber:4.1.0'
 
     // network
-    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta3'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0'
 
     // tests
     testCompile 'junit:junit:4.12'
