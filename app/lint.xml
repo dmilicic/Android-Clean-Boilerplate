@@ -1,0 +1,8 @@
+<lint>
+    <issue id="InvalidPackage">
+        <ignore regexp="okio-1.6.0.jar"/>
+        <ignore regexp="retrofit-2.0.0.jar"/>
+    </issue>
+    <issue id="ProtectedPermissions" severity="ignore">
+    </issue>
+</lint>
