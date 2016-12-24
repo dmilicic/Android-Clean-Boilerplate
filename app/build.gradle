@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply from: "${project.rootDir}/QA/quality.gradle"
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
 
     defaultConfig {
         applicationId "com.kodelabs.boilerplate"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -24,13 +24,14 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // general
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.jakewharton.timber:timber:4.1.0'
+    def supprtLibVersion = '25.1.0'
+    compile "com.android.support:appcompat-v7:$supprtLibVersion"
+    compile "com.android.support:design:$supprtLibVersion"
+    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.jakewharton.timber:timber:4.4.0'
 
     // network
-    compile 'com.squareup.retrofit2:retrofit:2.0.0'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
 
     // tests
     testCompile 'junit:junit:4.12'
